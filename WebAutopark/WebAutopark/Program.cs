@@ -1,6 +1,7 @@
 using WebAutopark.Controllers;
 using WebAutopark.Data;
 using WebAutopark.Data.Repositories;
+using WebAutopark.Middleware;
 using WebAutopark.Models;
 
 namespace WebAutopark
@@ -40,6 +41,8 @@ namespace WebAutopark
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.MapControllerRoute(
                 name: "default",
