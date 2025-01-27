@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Create vehicle type";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Vehicle type name</th>
+            <th scope="col">Tax coefficient</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model.Count == 0)
+        {
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-5"><h2>There are no veh type yet.</h2></div>
+                <div class="col-md-3"></div>
+            </div>   
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <th scope="row">@item.VehicleTypeId</th>
+                    <td>@item.Name</td>
+                    <td>@item.TaxCoefficient</td>
+                    <td>
+                        <a class="btn btn-outline-danger" href="/VehicleType/Delete?id=@item.VehicleTypeId" role="button">Delete</a>
+                        <a class="btn btn-outline-success" href="/VehicleType/Edit?id=@item.VehicleTypeId" role="button">Edit</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" href="/VehicleType/Create" role="button">Create veh type</a>

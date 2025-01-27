@@ -1,0 +1,23 @@
+﻿@model WebAutopark.Models.VehicleType
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
+        <form action="/VehicleType/Edit" method="post"> <!--shoult stay only method-->
+            <input type ="hidden" asp-for="VehicleTypeId" value="@Model.VehicleTypeId"></input>
+            <p>
+                <label class="form-label" asp-for="Name">Name: </label><br />
+                <input class="form-control" type="text" name="Name" asp-for="Name" value="@Model.Name" />
+                <span asp-validation-for="Name" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="TaxCoefficient">Tax coef:</label> <br />
+                <input class="form-control" type="text" name="TaxCoefficient" asp-for="TaxCoefficient" value="@Model.TaxCoefficient" />
+                <span asp-validation-for="TaxCoefficient" />
+            </p>
+            <input class="btn btn-primary" type="submit" value="Create" />
+        </form>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+
