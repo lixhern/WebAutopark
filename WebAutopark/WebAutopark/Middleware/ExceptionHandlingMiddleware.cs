@@ -20,19 +20,16 @@ namespace WebAutopark.Middleware
             }
             catch (NotFoundException ex)
             {
-                HandleRedirect(context, "/Error/NotFound", ex.Message);
+                context.Response.Redirect($"/Error/NotFound?message={Uri.EscapeDataString(ex.Message)}");
+            }
+            catch (AlreadyExistException ex)
+            {
+                context.Response.Redirect($"/Error/AlreadyExist?message={Uri.EscapeDataString(ex.Message)}");
             }
             catch (Exception ex)
             {
-                HandleRedirect(context, "/Error/Unexpected", "An unexpected error occurred. Please try again later.");
+                context.Response.Redirect($"/Error/Unexpected");
             }
-        }
-
-        private void HandleRedirect(HttpContext context, string redirectPath, string errorMessage)
-        {
-            context.Items["ErrorMessage"] = errorMessage;
-            context.Response.Redirect(redirectPath);
-            //return Task.CompletedTask;
         }
     }
 }
