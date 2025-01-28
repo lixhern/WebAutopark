@@ -1,0 +1,21 @@
+﻿<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <th scope="row">@item.ComponentId</th>
+                <td>@item.Name</td>
+                <td>
+                    <a class="btn btn-outline-danger" href="Component/Delete?@item.ComponentId">Delet</a>
+                </td>
+            </tr>            
+        }
+    </tbody>
+</table>

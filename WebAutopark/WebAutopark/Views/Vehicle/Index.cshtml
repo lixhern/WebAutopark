@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Vehicles";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "id" ? "id_desc" : "id")">
+                    ID @(ViewBag.CurrentSort == "id" ? "▲" : ViewBag.CurrentSort == "id_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+            <a href="?sortBy=@(ViewBag.CurrentSort == "model" ? "model_desc" : "model")">
+                Model @(ViewBag.CurrentSort == "model" ? "▲" : ViewBag.CurrentSort == "model_desc" ? "▼" : "")
+            </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "regNumber" ? "regNumber_desc" : "regNumber")">
+                    Registration number @(ViewBag.CurrentSort == "regNumber" ? "▲" : ViewBag.CurrentSort == "regNumber_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "weight" ? "weight_desc" : "weight")">
+                    Weight @(ViewBag.CurrentSort == "weight" ? "▲" : ViewBag.CurrentSort == "weight_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "year" ? "year_desc" : "year")">
+                    Year @(ViewBag.CurrentSort == "year" ? "▲" : ViewBag.CurrentSort == "year_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "mileage" ? "mileage_desc" : "mileage")">
+                    Mileage @(ViewBag.CurrentSort == "mileage" ? "▲" : ViewBag.CurrentSort == "mileage_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "color" ? "color_desc" : "color")">
+                    Color @(ViewBag.CurrentSort == "color" ? "▲" : ViewBag.CurrentSort == "color_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "fuelConsumption" ? "fuelConsumption_desc" : "fuelConsumption")">
+                    Fuel Consumption @(ViewBag.CurrentSort == "fuelConsumption" ? "▲" : ViewBag.CurrentSort == "fuelConsumption_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <th scope="row">@item.VehicleId</th>
+                <td>@item.Model</td>
+                <td>@item.RegistrationNumber</td>
+                <td>@item.Weight</td>
+                <td>@item.Year</td>
+                <td>@item.Mileage</td>
+                <td>@item.Color</td>
+                <td>@item.FuelConsumption</td>
+                <td>
+                    <form action="/Vehicle/Delete" method="post">
+                        <input type="hidden" name="id" value="@item.VehicleId" />
+                        <button class="btn btn-outline-danger" type="submit">Delete</button>
+                    </form>
+                    <a class="btn btn-outline-success" href="/Vehicle/Edit?id=@item.VehicleId" role="button">Edit</a>
+                    <a class="btn btn-outline-primary" href="Order/MakeOrder?id=@item.VehicleId", role = "button">Order parts for this veh</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<a class="btn btn-primary" href="/Vehicle/Create" role="button">Create veh</a>

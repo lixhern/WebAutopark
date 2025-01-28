@@ -1,0 +1,51 @@
+﻿@model WebAutopark.Models.Vehicle
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
+        <form action="/Vehicle/Create" method="post">
+            <p>
+                <label class="form-label" asp-for="Model">Model: </label><br />
+                <input class="form-control" type="text" name="Model" asp-for="Model" />
+                <span asp-validation-for="Model" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="VehicleTypeId">VehicleTypeId:</label> <br />
+                <input class="form-control" type="text" name="VehicleTypeId" asp-for="VehicleTypeId" />
+                <span asp-validation-for="VehicleTypeId" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="RegistrationNumber">RegistrationNumber:</label> <br />
+                <input class="form-control" type="text" name="RegistrationNumber" asp-for="RegistrationNumber" />
+                <span asp-validation-for="RegistrationNumber" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="Weight">Weight:</label> <br />
+                <input class="form-control" type="text" name="Weight" asp-for="Weight" />
+                <span asp-validation-for="Weight" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="Year">Year:</label> <br />
+                <input class="form-control" type="text" name="Year" asp-for="Year" />
+                <span asp-validation-for="Year" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="Mileage">Mileage:</label> <br />
+                <input class="form-control" type="text" name="Mileage" asp-for="Mileage" />
+                <span asp-validation-for="Mileage" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="Color">Color:</label> <br />
+                <input class="form-control" type="text" name="Color" asp-for="Color" />
+                <span asp-validation-for="Color" />
+            </p>
+            <p>
+                <label class="form-label" asp-for="FuelConsumption">FuelConsumption:</label> <br />
+                <input class="form-control" type="numer" step="0.01" name="FuelConsumption" asp-for="FuelConsumption" />
+                <span asp-validation-for="FuelConsumption" />
+            </p>
+            <input class="btn btn-primary" type="submit" value="Create" />
+        </form>
+    </div>
+    <div class="col-md-3"></div>
+</div>

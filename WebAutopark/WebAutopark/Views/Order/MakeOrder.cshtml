@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "Создать заказ";
+}
+
+<h2>Make order</h2>
+
+@using (Html.BeginForm("MakeOrder", "Order", FormMethod.Post))
+{
+    <div>
+        <label for="id">ID Транспортного средства:</label>
+        <input type="number" name="id" value="@(Model == 0 ? "" : Model)" />
+    </div>
+
+    <div id="components-list">
+        <div class="component-item">
+            <label for="componentName">Component name: </label>
+            <input type="text" name="Components[0].Item1" />
+
+            <label for="quantityOfComponents">Quantity of components: </label>
+            <input type="number" name="Components[0].Item2" />
+        </div>
+    </div>
+
+    <button type="button" id="add-component">Add Component</button>
+    <button type="submit">Создать заказ</button>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const componentsList = document.getElementById('components-list');
+        const addComponentButton = document.getElementById('add-component');
+
+        let componentIndex = 1; 
+
+        addComponentButton.addEventListener('click', function () {
+            const newComponent = document.createElement('div');
+            newComponent.className = 'component-item';
+
+            newComponent.innerHTML = `
+                    <label for="componentName">Component name: </label>
+                    <input type="text" name="components[${componentIndex}].Item1" />
+
+                    <label for="quantityOfComponents">Quantity of components: </label>
+                    <input type="number" name="components[${componentIndex}].Item2" />
+
+                    <button type="button" class="remove-component">Remove</button>
+                `;
+
+            componentsList.appendChild(newComponent);
+
+            newComponent.querySelector('.remove-component').addEventListener('click', function () {
+                newComponent.remove();
+            });
+
+            componentIndex++;
+        });
+    });
+</script>
