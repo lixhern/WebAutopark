@@ -40,7 +40,8 @@ namespace WebAutopark.Controllers
                 await _vehicleTypeRepository.Create(vehicleType);
                 return RedirectToAction(nameof(Index));
             }
-            return View(vehicleType); 
+
+            return View(); 
         }
 
         [HttpGet]
@@ -82,6 +83,14 @@ namespace WebAutopark.Controllers
             await _vehicleTypeRepository.Delete(item);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckVehicleTypeId(int VehicleTypeId)
+        {
+            var isValid = (await _vehicleTypeRepository.GetAll()).Any(vt => vt.VehicleTypeId == VehicleTypeId);
+
+            return Json(isValid);
         }
     }
 }
