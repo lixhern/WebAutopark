@@ -2,46 +2,48 @@
     ViewData["Title"] = "Vehicles";
 }
 
-<table class="table">
+<h2 class="mb-4">Vehicles</h2>
+
+<table class="table table-striped table-hover">
     <thead>
         <tr>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "id" ? "id_desc" : "id")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "id" ? "id_desc" : "id")" class="text-decoration-none">
                     ID @(ViewBag.CurrentSort == "id" ? "▲" : ViewBag.CurrentSort == "id_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-            <a href="?sortBy=@(ViewBag.CurrentSort == "model" ? "model_desc" : "model")">
-                Model @(ViewBag.CurrentSort == "model" ? "▲" : ViewBag.CurrentSort == "model_desc" ? "▼" : "")
-            </a>
-            </th>
-            <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "regNumber" ? "regNumber_desc" : "regNumber")">
-                    Registration number @(ViewBag.CurrentSort == "regNumber" ? "▲" : ViewBag.CurrentSort == "regNumber_desc" ? "▼" : "")
+                <a href="?sortBy=@(ViewBag.CurrentSort == "model" ? "model_desc" : "model")" class="text-decoration-none">
+                    Model @(ViewBag.CurrentSort == "model" ? "▲" : ViewBag.CurrentSort == "model_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "weight" ? "weight_desc" : "weight")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "regNumber" ? "regNumber_desc" : "regNumber")" class="text-decoration-none">
+                    Registration Number @(ViewBag.CurrentSort == "regNumber" ? "▲" : ViewBag.CurrentSort == "regNumber_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "weight" ? "weight_desc" : "weight")" class="text-decoration-none">
                     Weight @(ViewBag.CurrentSort == "weight" ? "▲" : ViewBag.CurrentSort == "weight_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "year" ? "year_desc" : "year")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "year" ? "year_desc" : "year")" class="text-decoration-none">
                     Year @(ViewBag.CurrentSort == "year" ? "▲" : ViewBag.CurrentSort == "year_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "mileage" ? "mileage_desc" : "mileage")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "mileage" ? "mileage_desc" : "mileage")" class="text-decoration-none">
                     Mileage @(ViewBag.CurrentSort == "mileage" ? "▲" : ViewBag.CurrentSort == "mileage_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "color" ? "color_desc" : "color")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "color" ? "color_desc" : "color")" class="text-decoration-none">
                     Color @(ViewBag.CurrentSort == "color" ? "▲" : ViewBag.CurrentSort == "color_desc" ? "▼" : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="?sortBy=@(ViewBag.CurrentSort == "fuelConsumption" ? "fuelConsumption_desc" : "fuelConsumption")">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "fuelConsumption" ? "fuelConsumption_desc" : "fuelConsumption")" class="text-decoration-none">
                     Fuel Consumption @(ViewBag.CurrentSort == "fuelConsumption" ? "▲" : ViewBag.CurrentSort == "fuelConsumption_desc" ? "▼" : "")
                 </a>
             </th>
@@ -52,7 +54,6 @@
         @foreach (var item in Model)
         {
             <tr>
-
                 <th scope="row">@item.VehicleId</th>
                 <td>@item.Model</td>
                 <td>@item.RegistrationNumber</td>
@@ -62,17 +63,13 @@
                 <td>@item.Color</td>
                 <td>@item.FuelConsumption</td>
                 <td>
-                    <form action="/Vehicle/Delete" method="post">
-                        <input type="hidden" name="id" value="@item.VehicleId" />
-                        <button class="btn btn-outline-danger" type="submit">Delete</button>
-                    </form>
-                    <a class="btn btn-outline-success" href="/Vehicle/Edit?id=@item.VehicleId" role="button">Edit</a>
-                    <a class="btn btn-outline-primary" href="Order/MakeOrder?id=@item.VehicleId", role = "button">Order parts for this veh</a>
+                    <a class="btn btn-outline-danger btn-sm" href="/Vehicle/Delete?id=@item.VehicleId" role="button">Delete</a>
+                    <a class="btn btn-outline-warning btn-sm" href="/Vehicle/Edit?id=@item.VehicleId" role="button">Edit</a>
+                    <a class="btn btn-outline-info btn-sm" href="Order/MakeOrder?id=@item.VehicleId" role="button">Order parts for this vehicle</a>
                 </td>
             </tr>
         }
-
     </tbody>
 </table>
 
-<a class="btn btn-primary" href="/Vehicle/Create" role="button">Create veh</a>
+<a class="btn btn-primary" href="/Vehicle/Create" role="button">Create Vehicle</a>

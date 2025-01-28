@@ -1,0 +1,12 @@
+﻿@model WebAutopark.Models.Component
+
+<h2>You shure you want to delete this component? Component - @Model.Name</h2>
+
+<form action="Delete" method="post">
+    <input type="hidden" asp-for="ComponentId" value="@Model.ComponentId"></input>
+    <input type="hidden" asp-for="Name" value="@Model.Name"></input>
+    <input class="btn btn-outline-danger" type="submit" value="Yes" />
+    <a class="btn btn-outline-success" href="Index">No</a>
+</form>
+
+

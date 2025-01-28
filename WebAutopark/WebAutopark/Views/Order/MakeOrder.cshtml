@@ -1,29 +1,32 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Создать заказ";
 }
 
-<h2>Make order</h2>
+<h2 class="mb-4">Make Order</h2>
 
 @using (Html.BeginForm("MakeOrder", "Order", FormMethod.Post))
 {
-    <div>
-        <label for="id">ID Транспортного средства:</label>
-        <input type="number" name="id" value="@(Model == 0 ? "" : Model)" />
+    <div class="mb-3">
+        <label for="id" class="form-label">ID Транспортного средства:</label>
+        <input type="number" class="form-control" name="id" value="@(Model == 0 ? "" : Model)" />
     </div>
 
     <div id="components-list">
-        <div class="component-item">
-            <label for="componentName">Component name: </label>
-            <input type="text" name="Components[0].Item1" />
-
-            <label for="quantityOfComponents">Quantity of components: </label>
-            <input type="number" name="Components[0].Item2" />
+        <div class="component-item mb-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column me-2">
+                <label for="componentName" class="form-label">Component name: </label>
+                <input type="text" class="form-control" name="Names[]" />
+            </div>
+            <div class="d-flex flex-column me-2">
+                <label for="quantityOfComponents" class="form-label">Quantity of components: </label>
+                <input type="number" class="form-control" name="Quantities[]" />
+            </div>
+            <button type="button" class="btn btn-danger remove-component">Remove</button>
         </div>
     </div>
 
-    <button type="button" id="add-component">Add Component</button>
-    <button type="submit">Создать заказ</button>
+    <button type="button" id="add-component" class="btn btn-success">Add Component</button>
+    <button type="submit" class="btn btn-primary">Создать заказ</button>
 }
 
 <script>
@@ -31,20 +34,20 @@
         const componentsList = document.getElementById('components-list');
         const addComponentButton = document.getElementById('add-component');
 
-        let componentIndex = 1; 
-
         addComponentButton.addEventListener('click', function () {
             const newComponent = document.createElement('div');
-            newComponent.className = 'component-item';
+            newComponent.className = 'component-item mb-3 d-flex justify-content-between align-items-center';
 
             newComponent.innerHTML = `
-                    <label for="componentName">Component name: </label>
-                    <input type="text" name="components[${componentIndex}].Item1" />
-
-                    <label for="quantityOfComponents">Quantity of components: </label>
-                    <input type="number" name="components[${componentIndex}].Item2" />
-
-                    <button type="button" class="remove-component">Remove</button>
+                    <div class="d-flex flex-column me-2">
+                        <label for="componentName" class="form-label">Component name: </label>
+                        <input type="text" class="form-control" name="Names[]" />
+                    </div>
+                    <div class="d-flex flex-column me-2">
+                        <label for="quantityOfComponents" class="form-label">Quantity of components: </label>
+                        <input type="number" class="form-control" name="Quantities[]" />
+                    </div>
+                    <button type="button" class="btn btn-danger remove-component">Remove</button>
                 `;
 
             componentsList.appendChild(newComponent);
@@ -52,8 +55,6 @@
             newComponent.querySelector('.remove-component').addEventListener('click', function () {
                 newComponent.remove();
             });
-
-            componentIndex++;
         });
     });
 </script>

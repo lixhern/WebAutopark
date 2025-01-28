@@ -1,10 +1,10 @@
 ﻿@model WebAutopark.Models.VehicleType;
 
 <h1>You sure you want to delete veh typ - @Model.Name?</h1>
-<form action="DeleteConfirm" method="post">
+<form action="Delete" method="post">
     <input type="hidden" asp-for="VehicleTypeId" value="@Model.VehicleTypeId"></input>
     <input type="hidden" asp-for="Name" value="@Model.Name"></input>
     <input type="hidden" asp-for="TaxCoefficient" value="@Model.TaxCoefficient"></input>
     <input class="btn btn-outline-danger" type="submit" value="Yes"/>
-    <a class="btn btn-outline-success" href="Index">No</a>
+    <a class="btn btn-outline-success" href="/VehicleType/Index">No</a>
 </form>

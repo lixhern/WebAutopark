@@ -1,21 +1,23 @@
-﻿<table class="table">
+﻿<h2 class="mb-4">Components</h2>
+
+<table class="table table-striped table-hover">
     <thead>
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Name</th>
-            <th scope="col">Action</th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in Model)
+        @foreach (var item in Model)
         {
             <tr>
                 <th scope="row">@item.ComponentId</th>
                 <td>@item.Name</td>
                 <td>
-                    <a class="btn btn-outline-danger" href="Component/Delete?@item.ComponentId">Delet</a>
+                    <a class="btn btn-outline-danger btn-sm" href="/Component/Delete?id=@item.ComponentId" role="button">Delete</a>
                 </td>
-            </tr>            
+            </tr>
         }
     </tbody>
 </table>
