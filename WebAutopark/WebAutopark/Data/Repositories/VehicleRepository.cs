@@ -99,9 +99,7 @@ namespace WebAutopark.Data.Repositories
             {
                 string query = $@"DELETE FROM Vehicles 
                     WHERE 
-                    Model = {item.Model}
-                    AND 
-                    RegistrationNumber = {item.RegistrationNumber}";
+                    VehicleId = {item.VehicleId}";
 
                 await connection.ExecuteAsync(query);
             }
