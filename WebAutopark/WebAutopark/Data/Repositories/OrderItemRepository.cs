@@ -45,20 +45,20 @@ namespace WebAutopark.Data.Repositories
             }
         }
 
-        public async Task Create(OrderItem item)
+        public async Task<int> Create(OrderItem item)
         {
             using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"INSERT INTO OrderItems
                     (OrderId, ComponentId, Quantity)
+                    OUTPUT INSERTED.OrderItemId
                     VALUES
-                    @OrderId,
-                    @ComponentId,
-                    @Quantity";
+                    (@OrderId, @ComponentId, @Quantity)";
 
-                await connection.ExecuteAsync(query);
+                var result = await connection.QuerySingleAsync<int>(query, item);
+                return result;
             }
-        }
+        }   
 
         public async Task Update(OrderItem item)
         {

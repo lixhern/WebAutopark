@@ -28,7 +28,9 @@ namespace WebAutopark.Data.Repositories
             using(var connection = _dbContext.GetConnection())
             {
                 string query = $"SELECT * FROM Vehicles WHERE VehicleId = {id}";
-                var vehicle = (await connection.QuerySingleAsync<Vehicle>(query));
+                
+                var vehicle = (await connection.QuerySingleOrDefaultAsync<Vehicle>(query));
+                
                 return vehicle;
             }
         }
@@ -38,22 +40,26 @@ namespace WebAutopark.Data.Repositories
             using (var connection = _dbContext.GetConnection())
             {
                 string query = $"SELECT * FROM Vehicles WHERE Model = {item.Model} AND RegistrationNumber = {item.RegistrationNumber}";
-                var vehicle = (await connection.QuerySingleAsync<Vehicle>(query));
+                
+                var vehicle = (await connection.QuerySingleOrDefaultAsync<Vehicle>(query));
+                
                 return vehicle;
             }
         }
 
 
-        public async Task Create(Vehicle item)
+        public async Task<int> Create(Vehicle item)
         {
-            using (var conntection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"INSERT INTO Vehicles
                     (vehicleTypeId, model, registrationNumber, weight, year, mileage, color, fuelConsumption)
+                    OUTPUT INSERTED.VehicleId
                     VALUES
                     (@VehicleTypeId, @Model, @RegistrationNumber, @Weight, @Year, @Mileage, @Color, @FuelConsumption)";
 
-                await conntection.ExecuteAsync(query, item);
+                var result = await connection.QuerySingleAsync<int>(query, item);
+                return result;
             }
         }
 

@@ -28,7 +28,7 @@ namespace WebAutopark.Data.Repositories
             {
                 string query = $@"SELECT * FROM Components
                     WHERE ComponentId = {id}";
-                var component = await connection.QuerySingleAsync<Component>(query);
+                var component = await connection.QuerySingleOrDefaultAsync<Component>(query);
                 return component;
             }
         }
@@ -38,15 +38,18 @@ namespace WebAutopark.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task Create(Component item)
+        public async Task<int> Create(Component item)
         {
             using(var connection = _dbContext.GetConnection())
             {
                 string query = $@"INSERT INTO Components
                     (Name)
-                    @Name";
+                    OUTPUT INSERTED.ComponentId
+                    VALUES
+                    (@Name)";
 
-                await connection.ExecuteAsync(query, item);
+                var result = await connection.QuerySingleAsync<int>(query, item);
+                return result;
             }
         }
 

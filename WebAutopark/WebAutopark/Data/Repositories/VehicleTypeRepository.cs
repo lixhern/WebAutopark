@@ -44,16 +44,18 @@ namespace WebAutopark.Data.Repositories
             }
         }
 
-        public async Task Create(VehicleType item) //return id
+        public async Task<int> Create(VehicleType item) //return id
         {
             using(var connection = _dbContext.GetConnection())
             {
                 string query = @"INSERT INTO VehicleTypes
                     (Name, TaxCoefficient)
+                    OUTPUT INSERTED.VehicleTypeId
                     VALUES
                     (@Name, @TaxCoefficient)";
 
-                await connection.ExecuteAsync(query, item);
+                var result = await connection.QuerySingleAsync<int>(query, item);
+                return result;
             }
         }
 

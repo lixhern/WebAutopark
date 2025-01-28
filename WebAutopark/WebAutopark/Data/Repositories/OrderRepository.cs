@@ -12,12 +12,12 @@ namespace WebAutopark.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<IEnumerable<Order>> GetAll()
+        public async Task<IEnumerable<Order>> GetAll()
         {
             using (var connection = _dbContext.GetConnection())
             {
                 string query = "SELECT * FROM Orders";
-                var orders = connection.QueryAsync<Order>(query);
+                var orders = await connection.QueryAsync<Order>(query);
                 return orders;
             }
         }
@@ -44,16 +44,17 @@ namespace WebAutopark.Data.Repositories
             }
         }
 
-        public async Task Create(Order item)
+        public async Task<int> Create(Order item)
         {
             using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"INSERT INTO ORDERS
                     (VehicleId, Date)
+                    OUTPUT INSERTED.OrderId
                     VALUES
-                    @VehicleId,
-                    @Date";
-                await connection.ExecuteAsync(query, item);
+                    (@VehicleId, @Date)";
+                var result = await connection.QuerySingleAsync<int>(query, item);
+                return result;
             }
         }
 
