@@ -36,10 +36,12 @@ namespace WebAutopark.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MakeOrder(int id, List<(string, int)> components)
+        public async Task<IActionResult> MakeOrder(int id, string[] names, int[] quantities)
         {
-            var vehicle = await _vehicleRepository.Get(id) ?? throw new NotFoundException($"There is not vehicle with such id - {id}");
+            if (names.Length != quantities.Length)
+                throw new InvalidOperationException();
 
+            var vehicle = await _vehicleRepository.Get(id) ?? throw new NotFoundException($"There is not vehicle with such id - {id}");
             var order = new Order
             {
                 VehicleId = id,
@@ -51,11 +53,12 @@ namespace WebAutopark.Controllers
             var componentIds = new List<int>();
             var orderItems = new List<OrderItem>();
 
-            foreach (var(name, quantity) in components)
+
+            for(int i = 0; i < names.Length; i++)
             {
                 var component = new Models.Component
                 {
-                    Name = name,
+                    Name = names[i],
                 };
 
                 var componentId = await _componentRepository.Create(component);
@@ -66,9 +69,10 @@ namespace WebAutopark.Controllers
                 {
                     OrderId = orderId,
                     ComponentId = componentId,
-                    Quantity = quantity
+                    Quantity = quantities[i]
                 });
             }
+
 
             try
             {
@@ -85,51 +89,33 @@ namespace WebAutopark.Controllers
                     await _componentRepository.Delete(componentId);
                 }
                 await _orderItemRepository.Delete(orderId);
-                throw ex;
+                throw;
             }
             
 
             return RedirectToAction(nameof(Index));
         }
 
-/*        public ActionResult Edit(int id)
+
+        [HttpGet]
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var order = await _orderRepository.Get(id);
+
+            if (order == null)
+                throw new NotFoundException($"There is no order with such id - {id}");
+
+            return View(order);
         }
 
-        // POST: OrderController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }*/
 
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: OrderController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(Order order)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _orderRepository.Delete(order);
+
+            return RedirectToAction(nameof(Index));
+
         }
     }
 }

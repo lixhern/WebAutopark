@@ -78,7 +78,7 @@ namespace WebAutopark.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteConfirm(VehicleType item)
+        public async Task<IActionResult> Delete(VehicleType item)
         {
             await _vehicleTypeRepository.Delete(item);
 

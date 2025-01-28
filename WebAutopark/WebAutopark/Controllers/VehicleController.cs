@@ -96,15 +96,21 @@ namespace WebAutopark.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
-            var vehicle = _vehicleRepository.Get(id);
+            var vehicle = await _vehicleRepository.Get(id);
 
             if (vehicle == null)
-                throw new NotFoundException($"There is no such vehicle.");
+                throw new NotFoundException($"There is no vehicle with such id - {id}");
 
-            await _vehicleRepository.Delete(id);
+            return View(vehicle);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(Vehicle vehicle)
+        {
+            await _vehicleRepository.Delete(vehicle);
 
             return RedirectToAction(nameof(Index));
         }

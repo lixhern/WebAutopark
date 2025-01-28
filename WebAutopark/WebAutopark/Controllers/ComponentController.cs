@@ -23,16 +23,21 @@ namespace WebAutopark.Controllers
         }
 
         [HttpGet]
-
-
-        [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
             var component = await _componentRepository.Get(id);
+
             if (component == null)
                 throw new NotFoundException($"There is no component with such id - {id}");
 
+            return View(component);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(Component component)
+        {
             await _componentRepository.Delete(component);
+
             return RedirectToAction(nameof(Index));
         }
     }
