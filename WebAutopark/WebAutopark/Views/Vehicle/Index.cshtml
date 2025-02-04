@@ -18,6 +18,11 @@
                 </a>
             </th>
             <th scope="col">
+                <a href="?sortBy=@(ViewBag.CurrentSort == "vehicleType" ? "vehicleType_desc" : "vehicleType")" class="text-decoration-none">
+                     Vehicle type id @(ViewBag.CurrentSort == "vehicleType" ? "▲" : ViewBag.CurrentSort == "vehicleType_desc" ? "▼" : "")
+                </a>
+            </th>
+            <th scope="col">
                 <a href="?sortBy=@(ViewBag.CurrentSort == "regNumber" ? "regNumber_desc" : "regNumber")" class="text-decoration-none">
                     Registration Number @(ViewBag.CurrentSort == "regNumber" ? "▲" : ViewBag.CurrentSort == "regNumber_desc" ? "▼" : "")
                 </a>
@@ -56,6 +61,7 @@
             <tr>
                 <th scope="row">@item.VehicleId</th>
                 <td>@item.Model</td>
+                <td>@item.VehicleTypeId</td>
                 <td>@item.RegistrationNumber</td>
                 <td>@item.Weight</td>
                 <td>@item.Year</td>

@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAutopark.Data.Repositories;
 using WebAutopark.Models;
 using WebAutopark.Exceptions;
+using WebAutopark.Data.Repositories.Interfaces;
 
 namespace WebAutopark.Controllers
 {
     public class VehicleTypeController : Controller
     {
-        private readonly IRepository<VehicleType> _vehicleTypeRepository;
+        private readonly IVehicleTypeRepository _vehicleTypeRepository;
 
-        public VehicleTypeController(IRepository<VehicleType> vehicleTypeRepository) //new primary constructor
+        public VehicleTypeController(IVehicleTypeRepository vehicleTypeRepository) //new primary constructor
         {
             _vehicleTypeRepository = vehicleTypeRepository;
         }

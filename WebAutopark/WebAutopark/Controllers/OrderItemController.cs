@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAutopark.Data.Repositories;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Models;
 
 namespace WebAutopark.Controllers
 {
     public class OrderItemController : Controller
     {
-        private readonly IRepository<OrderItem> _orderItemRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
 
-        public OrderItemController(IRepository<OrderItem> orderItemRepository)
+        public OrderItemController(IOrderItemRepository orderItemRepository)
         {
             _orderItemRepository = orderItemRepository;
         }

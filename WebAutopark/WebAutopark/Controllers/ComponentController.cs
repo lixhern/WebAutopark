@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WebAutopark.Data.Repositories;
 using WebAutopark.Models;
 using WebAutopark.Exceptions;
+using WebAutopark.Data.Repositories.Interfaces;
 
 namespace WebAutopark.Controllers
 {
     public class ComponentController : Controller
     {
-        private readonly IRepository<Component> _componentRepository;
+        private readonly IComponentRepository _componentRepository;
 
-        public ComponentController(IRepository<Component> componentRepository)
+        public ComponentController(IComponentRepository componentRepository)
         {
             _componentRepository = componentRepository;
         }

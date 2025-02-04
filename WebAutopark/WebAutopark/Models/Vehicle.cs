@@ -13,7 +13,7 @@ namespace WebAutopark.Models
         [StringLength(50, MinimumLength = 2)]
         public string Model { get; set; }
         [Required]
-        [Remote(action: "CheckForRegNumber", controller:"Vehicle", ErrorMessage ="There is already exist vehicle with this reg number")]
+        [Remote(action: "CheckForRegNumber", controller:"Vehicle", AdditionalFields = nameof(Model), ErrorMessage ="There is already exist vehicle with this reg number")]
         public string RegistrationNumber { get; set; }
         [Required]
         [Range(500, 30000, ErrorMessage ="The weight must be between 500 and 30000")]

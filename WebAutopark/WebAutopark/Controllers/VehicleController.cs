@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Runtime.CompilerServices;
-using WebAutopark.Data.Repositories;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Exceptions;
 using WebAutopark.Models;
 
@@ -10,9 +11,9 @@ namespace WebAutopark.Controllers
 {
     public class VehicleController : Controller
     {
-        private readonly IRepository<Vehicle> _vehicleRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public VehicleController(IRepository<Vehicle> vehicleRepository)
+        public VehicleController(IVehicleRepository vehicleRepository)
         {
             _vehicleRepository = vehicleRepository;
         }
@@ -28,6 +29,8 @@ namespace WebAutopark.Controllers
                 {"id_desc", data => data.OrderByDescending(d => d.VehicleId) },
                 {"model", data => data.OrderBy(d => d.Model) },
                 {"model_desc", data => data.OrderByDescending(d => d.Model) },
+                {"vehicleType", data => data.OrderBy(d => d.VehicleTypeId) },
+                {"vehicleType_desc", data => data.OrderByDescending(d => d.VehicleTypeId) },
                 {"regNumber", data => data.OrderBy(d => d.RegistrationNumber) },
                 {"regNumber_desc", data => data.OrderByDescending(d => d.RegistrationNumber) },
                 {"weight", data => data.OrderBy(d => d.Weight) },
@@ -61,11 +64,11 @@ namespace WebAutopark.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Vehicle vehicle) //return ID Reposiroty
+        public async Task<ActionResult> Create(Vehicle vehicle)
         {
             if (ModelState.IsValid)
             {
-                if (await IsExist(vehicle))
+                if (await IsExist(vehicle.RegistrationNumber, vehicle.Model))
                     throw new AlreadyExistException($"There is already exist vehicle with this registration number - {vehicle.RegistrationNumber}");
 
                 await _vehicleRepository.Create(vehicle);
@@ -88,7 +91,7 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async  Task<ActionResult> Edit(Vehicle vehicle)
         {
-            if (await IsExist(vehicle))
+            if (!(await IsExist(vehicle.RegistrationNumber, vehicle.Model)))
                 throw new AlreadyExistException($"There is already exist vehicle with this registration number - {vehicle.RegistrationNumber}");
             
             await _vehicleRepository.Update(vehicle);
@@ -115,19 +118,27 @@ namespace WebAutopark.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> IsExist(Vehicle vehicle) //this mb need to optimized
+        private async Task<bool> IsExist(string RegistrationNumber, string model) //this mb need to optimized //to DB regNumber write unique field
         {
-            var isValid = (await _vehicleRepository.GetAll()).Any(v => v.RegistrationNumber == vehicle.RegistrationNumber);
+            if (string.IsNullOrEmpty(RegistrationNumber))
+                return true;
 
-            return isValid;
+            var vehicle = await _vehicleRepository.GetByRegNumber(RegistrationNumber);
+
+            Console.WriteLine(model);
+
+            if (vehicle.Model.Equals(model))
+            {
+                return true;
+            }
+            
+            return false;
         }
 
         [HttpGet]
-        public async Task<IActionResult> CheckForRegNumber(string RegistrationNumber)
+        public async Task<IActionResult> CheckForRegNumber(string RegistrationNumber, string Model)
         {
-            var isValid = (await _vehicleRepository.GetAll()).Any(v => v.RegistrationNumber.Equals(RegistrationNumber));
-
-            return Json(!isValid);
+            return Json(await IsExist(RegistrationNumber, Model));
         }
     }
 }

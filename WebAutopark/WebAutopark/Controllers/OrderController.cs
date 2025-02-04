@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
-using WebAutopark.Data.Repositories;
 using WebAutopark.Models;
 using WebAutopark.Exceptions;
+using System.Net.Http.Headers;
+using WebAutopark.Data.Repositories.Interfaces;
 
 namespace WebAutopark.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<Models.Component> _componentRepository;
-        private readonly IRepository<OrderItem> _orderItemRepository;
-        private readonly IRepository<Vehicle> _vehicleRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IComponentRepository _componentRepository;
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public OrderController(IRepository<Order> orderRepository, IRepository<Models.Component> componentRepository, IRepository<OrderItem> orderItemRepository, IRepository<Vehicle> vehicleRepositroy)
+        public OrderController(IOrderRepository orderRepository, IComponentRepository componentRepository, IOrderItemRepository orderItemRepository, IVehicleRepository vehicleRepositroy)
         {
             _orderRepository = orderRepository;
             _componentRepository = componentRepository;
@@ -25,7 +26,7 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var orders = await _orderRepository.GetAll();
+            var orders = await _orderRepository.GetAllInDetails();
             return View(orders);
         }
 
@@ -42,60 +43,27 @@ namespace WebAutopark.Controllers
                 throw new InvalidOperationException();
 
             var vehicle = await _vehicleRepository.Get(id) ?? throw new NotFoundException($"There is not vehicle with such id - {id}");
-            var order = new Order
-            {
-                VehicleId = id,
-                Date = DateTime.Now,
-            };
 
-            var orderId = await _orderRepository.Create(order);
+            var orderId = await CreateOrder(id);
 
-            var componentIds = new List<int>();
-            var orderItems = new List<OrderItem>();
-
-
-            for(int i = 0; i < names.Length; i++)
-            {
-                var component = new Models.Component
-                {
-                    Name = names[i],
-                };
-
-                var componentId = await _componentRepository.Create(component);
-
-                componentIds.Add(componentId);
-
-                orderItems.Add(new OrderItem
-                {
-                    OrderId = orderId,
-                    ComponentId = componentId,
-                    Quantity = quantities[i]
-                });
-            }
-
+            List<int> componentIds = null;
 
             try
             {
-                foreach(var orderItem in orderItems)
-                {
-                    await _orderItemRepository.Create(orderItem);
-                }
+                componentIds = await CreateOrderItems(orderId, names, quantities);
                 
             }
             catch(Exception ex)
             {
-                foreach(var componentId in componentIds)
+                if(componentIds != null)
                 {
-                    await _componentRepository.Delete(componentId);
+                    await RollbackOrder(orderId, componentIds);
                 }
-                await _orderItemRepository.Delete(orderId);
                 throw;
             }
-            
 
             return RedirectToAction(nameof(Index));
         }
-
 
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
@@ -108,7 +76,6 @@ namespace WebAutopark.Controllers
             return View(order);
         }
 
-
         [HttpPost]
         public async Task<ActionResult> Delete(Order order)
         {
@@ -116,6 +83,64 @@ namespace WebAutopark.Controllers
 
             return RedirectToAction(nameof(Index));
 
+        }
+
+        private async Task<int> CreateOrder(int vehicleId)
+        {
+            var order = new Order
+            {
+                VehicleId = vehicleId,
+                Date = DateTime.Now,
+            };
+
+            return await _orderRepository.Create(order);
+        }
+
+        private async Task<int> CreateComponent(string name)
+        {
+            WebAutopark.Models.Component component = new WebAutopark.Models.Component
+            {
+                Name = name,
+            };
+
+            return await _componentRepository.Create(component);
+        }
+
+        private async Task<List<int>> CreateOrderItems(int orderId, string[] names, int[] quantities)
+        {
+            var componentIds = new List<int>();
+            var orderItems = new List<OrderItem>();
+
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                var componentId = await CreateComponent(names[i]);
+                componentIds.Add(componentId);
+
+                orderItems.Add(new OrderItem
+                {
+                    OrderId = orderId,
+                    ComponentId = componentId,
+                    Quantity = quantities[i]
+                });
+            }
+
+            foreach(var orderItem in orderItems)
+            {
+                await _orderItemRepository.Create(orderItem);
+            }
+
+            return componentIds;
+        }
+
+        private async Task RollbackOrder(int orderId, List<int> componentIds)
+        {
+            foreach (var componentId in componentIds)
+            {
+                await _componentRepository.Delete(componentId);
+            }
+
+            await _orderItemRepository.Delete(orderId);
         }
     }
 }

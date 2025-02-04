@@ -1,6 +1,7 @@
 using WebAutopark.Controllers;
 using WebAutopark.Data;
-using WebAutopark.Data.Repositories;
+using WebAutopark.Data.Repositories.Implementations;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Middleware;
 using WebAutopark.Models;
 
@@ -18,11 +19,11 @@ namespace WebAutopark
             builder.Services.AddScoped<DapperDbContext>(provider => 
                 new DapperDbContext(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddTransient<IRepository<VehicleType>, VehicleTypeRepository>();
-            builder.Services.AddTransient<IRepository<Vehicle>, VehicleRepository>();
-            builder.Services.AddTransient<IRepository<Order>, OrderRepository>();
-            builder.Services.AddTransient<IRepository<OrderItem>, OrderItemRepository>();
-            builder.Services.AddTransient<IRepository<Component>, ComponentRepository>();
+            builder.Services.AddTransient<IVehicleTypeRepository, VehicleTypeRepository>();
+            builder.Services.AddTransient<IVehicleRepository, VehicleRepository>();
+            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+            builder.Services.AddTransient<IComponentRepository, ComponentRepository>();
             
 
             var app = builder.Build();
