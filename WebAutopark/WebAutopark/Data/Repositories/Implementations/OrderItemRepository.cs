@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Models;
 
-namespace WebAutopark.Data.Repositories
+namespace WebAutopark.Data.Repositories.Implementations
 {
-    public class OrderItemRepository : IRepository<OrderItem>
+    public class OrderItemRepository : IOrderItemRepository
     {
         private readonly DapperDbContext _dbContext;
 
@@ -14,32 +15,20 @@ namespace WebAutopark.Data.Repositories
 
         public async Task<IEnumerable<OrderItem>> GetAll()
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = "SELECT * FROM OrderItems";
-                var orderItems = await connection.QueryAsync<OrderItem>(query); 
+                var orderItems = await connection.QueryAsync<OrderItem>(query);
                 return orderItems;
             }
         }
 
         public async Task<OrderItem> Get(int id)
         {
-            using(var connection = _dbContext.GetConnection())
-            {
-                string query = $@"SELECT * FROM OrderItems 
-                    WHERE OrderItemId = {id}";
-                var orderItem = await connection.QuerySingleAsync<OrderItem>(query);
-                return orderItem;
-            }
-        }
-
-        public async Task<OrderItem> Get(OrderItem item)
-        {
             using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"SELECT * FROM OrderItems 
-                    WHERE OrderId = {item.OrderId}
-                    AND ComponentId = {item.ComponentId}";
+                    WHERE OrderItemId = {id}";
                 var orderItem = await connection.QuerySingleAsync<OrderItem>(query);
                 return orderItem;
             }
@@ -57,19 +46,6 @@ namespace WebAutopark.Data.Repositories
 
                 var result = await connection.QuerySingleAsync<int>(query, item);
                 return result;
-            }
-        }   
-
-        public async Task Update(OrderItem item)
-        {
-            using (var connection = _dbContext.GetConnection())
-            {
-                string query = $@"UPDATE OrderITems
-                    OrderId = @OrderId,
-                    ComponentId = @ComponentId,
-                    Quantity = @Quantity";
-
-                await connection.ExecuteAsync(query, item);
             }
         }
 

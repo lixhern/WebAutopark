@@ -1,10 +1,10 @@
 ﻿using Dapper;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Models;
-//можно попробовать сделать rollback
 
-namespace WebAutopark.Data.Repositories
+namespace WebAutopark.Data.Repositories.Implementations
 {
-    public class VehicleRepository : IRepository<Vehicle>
+    public class VehicleRepository : IVehicleRepository
     {
         private DapperDbContext _dbContext;
 
@@ -15,9 +15,9 @@ namespace WebAutopark.Data.Repositories
 
         public async Task<IEnumerable<Vehicle>> GetAll()
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
-                string query = @"SELECT *  FROM Vehicles"; //join vehType mbmbmbmmbmb
+                string query = @"SELECT *  FROM Vehicles";
                 var vehicles = await connection.QueryAsync<Vehicle>(query);
                 return vehicles;
             }
@@ -25,28 +25,30 @@ namespace WebAutopark.Data.Repositories
 
         public async Task<Vehicle> Get(int id)
         {
-            using(var connection = _dbContext.GetConnection())
-            {
-                string query = $"SELECT * FROM Vehicles WHERE VehicleId = {id}";
-                
-                var vehicle = (await connection.QuerySingleOrDefaultAsync<Vehicle>(query));
-                
-                return vehicle;
-            }
-        }
-
-        public async Task<Vehicle> Get(Vehicle item)
-        {
             using (var connection = _dbContext.GetConnection())
             {
-                string query = $"SELECT * FROM Vehicles WHERE Model = {item.Model} AND RegistrationNumber = {item.RegistrationNumber}";
-                
-                var vehicle = (await connection.QuerySingleOrDefaultAsync<Vehicle>(query));
-                
+                string query = $"SELECT * FROM Vehicles WHERE VehicleId = {id}";
+
+                var vehicle = await connection.QuerySingleOrDefaultAsync<Vehicle>(query);
+
                 return vehicle;
             }
         }
 
+
+        public async Task<Vehicle> GetByRegNumber(string regNumber)
+        {
+            using(var connection = _dbContext.GetConnection())
+            {
+                string query = $@"
+                    SELECT * FROM Vehicles WHERE RegistrationNumber = '{regNumber}'
+                    ";
+
+                var vehicle = await connection.QuerySingleOrDefaultAsync<Vehicle>(query);
+
+                return vehicle;
+            }
+        }
 
         public async Task<int> Create(Vehicle item)
         {
@@ -85,7 +87,7 @@ namespace WebAutopark.Data.Repositories
 
         public async Task Delete(int id)
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"DELETE FROM Vehicles WHERE VehicleId = {id}";
 
@@ -95,7 +97,7 @@ namespace WebAutopark.Data.Repositories
 
         public async Task Delete(Vehicle item)
         {
-            using(var connection = _dbContext.GetConnection()) //search by id mbmb
+            using (var connection = _dbContext.GetConnection()) 
             {
                 string query = $@"DELETE FROM Vehicles 
                     WHERE 
@@ -110,5 +112,7 @@ namespace WebAutopark.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

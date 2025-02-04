@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Models;
+using WebAutopark.ViewModel;
 
-namespace WebAutopark.Data.Repositories
+namespace WebAutopark.Data.Repositories.Implementations
 {
-    public class OrderRepository : IRepository<Order>
+    public class OrderRepository : IOrderRepository
     {
         private readonly DapperDbContext _dbContext;
 
@@ -17,7 +19,20 @@ namespace WebAutopark.Data.Repositories
             using (var connection = _dbContext.GetConnection())
             {
                 string query = "SELECT * FROM Orders";
-                var orders = await connection.QueryAsync<Order>(query);
+                return await connection.QueryAsync<Order>(query);
+            }
+        }
+
+        public async Task<IEnumerable<OrderViewModel>> GetAllInDetails()
+        {
+            using (var connection = _dbContext.GetConnection())
+            {
+                string query = @"
+                    SELECT oi.OrderId, v.Model, o.Date, c.Name, oi.Quantity FROM OrderItems oi
+                    JOIN Orders o ON oi.OrderId = o.OrderId
+                    Join Vehicles v ON o.VehicleId = v.VehicleId
+                    JOIN Components c ON oi.ComponentId = c.ComponentId";
+                var orders = await connection.QueryAsync<OrderViewModel>(query);
                 return orders;
             }
         }
@@ -28,17 +43,6 @@ namespace WebAutopark.Data.Repositories
             {
                 string query = $@"SELECT * FROM Orders
                     WHERE OrderId = {id}";
-                var order = await connection.QuerySingleAsync<Order>(query);
-                return order;
-            }
-        }
-
-        public async Task<Order> Get(Order item)
-        {
-            using (var connection = _dbContext.GetConnection())
-            {
-                string query = $@"SELECT * FROM Orders
-                    WHERE OrderId = {item.OrderId}";
                 var order = await connection.QuerySingleAsync<Order>(query);
                 return order;
             }

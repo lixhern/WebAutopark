@@ -1,9 +1,10 @@
 ﻿using Dapper;
+using WebAutopark.Data.Repositories.Interfaces;
 using WebAutopark.Models;
 
-namespace WebAutopark.Data.Repositories
+namespace WebAutopark.Data.Repositories.Implementations
 {
-    public class VehicleTypeRepository : IRepository<VehicleType>
+    public class VehicleTypeRepository : IVehicleTypeRepository
     {
         private DapperDbContext _dbContext;
 
@@ -14,7 +15,7 @@ namespace WebAutopark.Data.Repositories
 
         public async Task<IEnumerable<VehicleType>> GetAll()
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = @"SELECT * FROM VehicleTypes";
                 var vehTypes = await connection.QueryAsync<VehicleType>(query);
@@ -33,20 +34,9 @@ namespace WebAutopark.Data.Repositories
             }
         }
 
-        public async Task<VehicleType> Get(VehicleType item) //mb
+        public async Task<int> Create(VehicleType item) 
         {
             using (var connection = _dbContext.GetConnection())
-            {
-                string query = @$"SELECT * FROM VehicleTypes
-                    WHERE VehicleTypeId = {item.VehicleTypeId}";
-                var vehType = await connection.QuerySingleOrDefaultAsync<VehicleType>(query);
-                return vehType;
-            }
-        }
-
-        public async Task<int> Create(VehicleType item) //return id
-        {
-            using(var connection = _dbContext.GetConnection())
             {
                 string query = @"INSERT INTO VehicleTypes
                     (Name, TaxCoefficient)
@@ -75,7 +65,7 @@ namespace WebAutopark.Data.Repositories
 
         public async Task Delete(int id)
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"DELETE FROM VehicleTypes
                     WHERE VehicleTypeId = {id}";
@@ -83,10 +73,10 @@ namespace WebAutopark.Data.Repositories
                 await connection.ExecuteAsync(query);
             }
         }
-        //stay item !!!!!
-        public async Task Delete(VehicleType item) //maybe should delete this method, stay only by ID
+
+        public async Task Delete(VehicleType item)
         {
-            using(var connection = _dbContext.GetConnection())
+            using (var connection = _dbContext.GetConnection())
             {
                 string query = $@"DELETE FROM VehicleTypes
                     WHERE VehicleTypeId = {item.VehicleTypeId}";
