@@ -37,6 +37,23 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
+        public async Task<IEnumerable<OrderViewModel>> GetInDetails(int id)
+        {
+            using(var connection = _dbContext.GetConnection())
+            {
+                string query = $@"
+                    SELECT oi.OrderId, v.Model, o.Date, c.Name, oi.Quantity FROM OrderItems oi
+                    JOIN Orders o ON oi.OrderId = o.OrderId
+                    Join Vehicles v ON o.VehicleId = v.VehicleId
+                    JOIN Components c ON oi.ComponentId = c.ComponentId
+                    WHERE oi.OrderId = {id}
+                    ";
+
+                var order = await connection.QueryAsync<OrderViewModel>(query);
+                return order;
+            }
+        }
+
         public async Task<Order> Get(int id)
         {
             using (var connection = _dbContext.GetConnection())

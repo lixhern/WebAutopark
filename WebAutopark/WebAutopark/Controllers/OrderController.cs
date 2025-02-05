@@ -26,8 +26,16 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var orders = await _orderRepository.GetAllInDetails();
+            var orders = await _orderRepository.GetAll();
+            //var orders = await _orderRepository.GetAllInDetails();
             return View(orders);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _orderRepository.GetInDetails(id);
+            return View(order);
         }
 
         [HttpGet]

@@ -4,10 +4,9 @@
     <thead>
         <tr>
             <th scope="col">Order ID</th>
-            <th scope="col">Vehicle model</th>
+            <th scope="col">Vehicle ID</th>
             <th scope="col">Date</th>
-            <th scope="col">Component</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -15,11 +14,11 @@
         {
             <tr>
                 <th scope="row">@item.OrderId</th>
-                <th scope="row">@item.Model</th>
+                <td scope="row">@item.VehicleId</td>
                 <td scope="row">@item.Date.ToString("dd-MM-yyyy")</td>
-                <td scope="row">@item.Name</td>
                 <td>
                     <a class="btn btn-outline-danger btn-sm" href="/Order/Delete?id=@item.OrderId" role="button">Delete</a>
+                    <a class="btn btn-outline-success btn-sm" href="/Order/Details?id=@item.OrderId" role="button">Details</a>
                 </td>
             </tr>
         }
