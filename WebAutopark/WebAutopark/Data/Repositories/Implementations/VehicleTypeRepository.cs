@@ -57,7 +57,7 @@ namespace WebAutopark.Data.Repositories.Implementations
                     SET
                     Name = @Name,
                     TaxCoefficient = @TaxCoefficient
-                    WHERE VehicleTypeId = @VehicleTypeId AND Name = @Name AND TaxCoefficient = @TaxCoefficient";
+                    WHERE VehicleTypeId = @VehicleTypeId";
 
                 await connection.ExecuteAsync(query, item);
             }

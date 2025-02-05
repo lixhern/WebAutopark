@@ -68,7 +68,7 @@ namespace WebAutopark.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (await IsExist(vehicle.RegistrationNumber, vehicle.Model))
+                if (!(await IsExist(vehicle.RegistrationNumber, vehicle.Model)))
                     throw new AlreadyExistException($"There is already exist vehicle with this registration number - {vehicle.RegistrationNumber}");
 
                 await _vehicleRepository.Create(vehicle);
@@ -124,6 +124,9 @@ namespace WebAutopark.Controllers
                 return true;
 
             var vehicle = await _vehicleRepository.GetByRegNumber(RegistrationNumber);
+
+            if (vehicle == null)
+                return true;
 
             Console.WriteLine(model);
 

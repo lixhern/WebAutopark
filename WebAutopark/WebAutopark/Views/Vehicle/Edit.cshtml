@@ -42,7 +42,7 @@
             </p>
             <p>
                 <label class="form-label" asp-for="FuelConsumption">FuelConsumption:</label> <br />
-                <input class="form-control" type="text" name="FuelConsumption" asp-for="FuelConsumption" value="@Model.FuelConsumption" />
+                <input class="form-control" type="numer" step="0.01" name="FuelConsumption" asp-for="FuelConsumption" value="@Model.FuelConsumption" />
                 <span asp-validation-for="FuelConsumption" />
             </p>
             <input class="btn btn-primary" type="submit" value="Create" />

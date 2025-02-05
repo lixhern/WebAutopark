@@ -58,8 +58,12 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(VehicleType vehicleType) 
         {
+            Console.WriteLine($"{vehicleType.Name} {vehicleType.TaxCoefficient}");
+            Console.WriteLine(ModelState.IsValid);
             if (ModelState.IsValid)
             {
+                Console.WriteLine($"{vehicleType.Name} {vehicleType.TaxCoefficient}");
+                Console.WriteLine(ModelState.IsValid);
                 await _vehicleTypeRepository.Update(vehicleType);
             }
             

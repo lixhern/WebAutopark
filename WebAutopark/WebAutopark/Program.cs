@@ -16,7 +16,7 @@ namespace WebAutopark
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<DapperDbContext>(provider => 
+            builder.Services.AddSingleton<DapperDbContext>(provider => 
                 new DapperDbContext(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddTransient<IVehicleTypeRepository, VehicleTypeRepository>();
