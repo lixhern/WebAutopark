@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAutopark.Models;
 using WebAutopark.Exceptions;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 
 namespace WebAutopark.Controllers
 {
@@ -9,7 +9,7 @@ namespace WebAutopark.Controllers
     {
         private readonly IVehicleTypeRepository _vehicleTypeRepository;
 
-        public VehicleTypeController(IVehicleTypeRepository vehicleTypeRepository) //new primary constructor
+        public VehicleTypeController(IVehicleTypeRepository vehicleTypeRepository)
         {
             _vehicleTypeRepository = vehicleTypeRepository;
         }
@@ -17,7 +17,8 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var vehicleTypes = await _vehicleTypeRepository.GetAll();
+            var vehicleTypes = await _vehicleTypeRepository.GetAllAsync();
+
             return View(vehicleTypes);
         }
 
@@ -32,12 +33,12 @@ namespace WebAutopark.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isExist = (await _vehicleTypeRepository.GetAll()).Any(vt => vt.Name == vehicleType.Name);
+                var isExist = (await _vehicleTypeRepository.GetAllAsync()).Any(vt => vt.Name == vehicleType.Name);
 
                 if (isExist)
-                    throw new AlreadyExistException($"There is already exist vehicle type with thi name \"{vehicleType.Name}\"");
+                    throw new AlreadyExistException($"Vehicle type \"{vehicleType.Name}\" already exists.");
 
-                await _vehicleTypeRepository.Create(vehicleType);
+                await _vehicleTypeRepository.CreateAsync(vehicleType);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -47,10 +48,8 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var vehicleType = await _vehicleTypeRepository.Get(id);
-
-            if (vehicleType == null)
-                throw new NotFoundException($"There is no veh with such id {id}");
+            var vehicleType = await _vehicleTypeRepository.GetAsync(id)
+                ?? throw new NotFoundException($"No vehicle type found with ID {id}.");
 
             return View(vehicleType);
         }
@@ -58,13 +57,9 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(VehicleType vehicleType) 
         {
-            Console.WriteLine($"{vehicleType.Name} {vehicleType.TaxCoefficient}");
-            Console.WriteLine(ModelState.IsValid);
             if (ModelState.IsValid)
             {
-                Console.WriteLine($"{vehicleType.Name} {vehicleType.TaxCoefficient}");
-                Console.WriteLine(ModelState.IsValid);
-                await _vehicleTypeRepository.Update(vehicleType);
+                await _vehicleTypeRepository.UpdateAsync(vehicleType);
             }
             
             return RedirectToAction(nameof(Index));
@@ -73,10 +68,8 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var vehType = await _vehicleTypeRepository.Get(id);
-
-            if (vehType == null)
-                throw new NotFoundException($"There is no veh with such id {id}");
+            var vehType = await _vehicleTypeRepository.GetAsync(id)
+                ?? throw new NotFoundException($"No vehicle type found with ID {id}.");
 
             return View(vehType);
         }
@@ -84,7 +77,7 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(VehicleType item)
         {
-            await _vehicleTypeRepository.Delete(item);
+            await _vehicleTypeRepository.DeleteAsync(item);
 
             return RedirectToAction(nameof(Index));
         }
@@ -92,7 +85,7 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> CheckVehicleTypeId(int VehicleTypeId)
         {
-            var isValid = (await _vehicleTypeRepository.GetAll()).Any(vt => vt.VehicleTypeId == VehicleTypeId);
+            var isValid = (await _vehicleTypeRepository.GetAllAsync()).Any(vt => vt.VehicleTypeId == VehicleTypeId);
 
             return Json(isValid);
         }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using WebAutopark.Models;
 using WebAutopark.Exceptions;
 using System.Net.Http.Headers;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 
 namespace WebAutopark.Controllers
 {
@@ -15,7 +15,11 @@ namespace WebAutopark.Controllers
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IVehicleRepository _vehicleRepository;
 
-        public OrderController(IOrderRepository orderRepository, IComponentRepository componentRepository, IOrderItemRepository orderItemRepository, IVehicleRepository vehicleRepositroy)
+        public OrderController(
+            IOrderRepository orderRepository, 
+            IComponentRepository componentRepository, 
+            IOrderItemRepository orderItemRepository, 
+            IVehicleRepository vehicleRepositroy)
         {
             _orderRepository = orderRepository;
             _componentRepository = componentRepository;
@@ -26,7 +30,7 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var orders = await _orderRepository.GetAll();
+            var orders = await _orderRepository.GetAllAsync();
             //var orders = await _orderRepository.GetAllInDetails();
             return View(orders);
         }
@@ -34,7 +38,10 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var order = await _orderRepository.GetInDetails(id);
+            var order = await _orderRepository.GetInDetailsAsync(id);
+            if (order.Count() == 0)
+                throw new NotFoundException($"Order with ID {id} not found.");
+
             return View(order);
         }
 
@@ -48,9 +55,10 @@ namespace WebAutopark.Controllers
         public async Task<IActionResult> MakeOrder(int id, string[] names, int[] quantities)
         {
             if (names.Length != quantities.Length)
-                throw new InvalidOperationException();
+                throw new ArgumentException($"Mismatch between component names ({names.Length}) and quantities ({quantities.Length}).");
 
-            var vehicle = await _vehicleRepository.Get(id) ?? throw new NotFoundException($"There is not vehicle with such id - {id}");
+            var vehicle = await _vehicleRepository.GetAsync(id) 
+                ?? throw new NotFoundException($"There is not vehicle with such id - {id}");
 
             var orderId = await CreateOrder(id);
 
@@ -76,10 +84,8 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
-            var order = await _orderRepository.Get(id);
-
-            if (order == null)
-                throw new NotFoundException($"There is no order with such id - {id}");
+            var order = await _orderRepository.GetAsync(id)
+                ?? throw new NotFoundException($"There is no order with such id - {id}");
 
             return View(order);
         }
@@ -87,7 +93,7 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(Order order)
         {
-            await _orderRepository.Delete(order);
+            await _orderRepository.DeleteAsync(order);
 
             return RedirectToAction(nameof(Index));
 
@@ -101,7 +107,7 @@ namespace WebAutopark.Controllers
                 Date = DateTime.Now,
             };
 
-            return await _orderRepository.Create(order);
+            return await _orderRepository.CreateAsync(order);
         }
 
         private async Task<int> CreateComponent(string name)
@@ -111,14 +117,13 @@ namespace WebAutopark.Controllers
                 Name = name,
             };
 
-            return await _componentRepository.Create(component);
+            return await _componentRepository.CreateAsync(component);
         }
 
         private async Task<List<int>> CreateOrderItems(int orderId, string[] names, int[] quantities)
         {
             var componentIds = new List<int>();
             var orderItems = new List<OrderItem>();
-
 
             for (int i = 0; i < names.Length; i++)
             {
@@ -135,7 +140,7 @@ namespace WebAutopark.Controllers
 
             foreach(var orderItem in orderItems)
             {
-                await _orderItemRepository.Create(orderItem);
+                await _orderItemRepository.CreateAsync(orderItem);
             }
 
             return componentIds;
@@ -145,10 +150,10 @@ namespace WebAutopark.Controllers
         {
             foreach (var componentId in componentIds)
             {
-                await _componentRepository.Delete(componentId);
+                await _componentRepository.DeleteAsync(componentId);
             }
 
-            await _orderItemRepository.Delete(orderId);
+            await _orderItemRepository.DeleteAsync(orderId);
         }
     }
 }

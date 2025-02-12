@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Runtime.CompilerServices;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Exceptions;
 using WebAutopark.Models;
 
@@ -45,7 +45,7 @@ namespace WebAutopark.Controllers
                 {"fuelConsumption_desc", data => data.OrderByDescending(d => d.FuelConsumption) }
             };
 
-            var vehicle = (await _vehicleRepository.GetAll()).AsQueryable();
+            var vehicle = (await _vehicleRepository.GetAllAsync()).AsQueryable();
 
             if (sortExpression.ContainsKey(sortBy))
             {
@@ -55,7 +55,6 @@ namespace WebAutopark.Controllers
 
             return View(vehicle);
         }
-
 
         [HttpGet]
         public async Task<ActionResult> Create()
@@ -68,22 +67,20 @@ namespace WebAutopark.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!(await IsExist(vehicle.RegistrationNumber, vehicle.Model)))
-                    throw new AlreadyExistException($"There is already exist vehicle with this registration number - {vehicle.RegistrationNumber}");
+                if(!(await IsExist(vehicle.RegistrationNumber, vehicle.VehicleId)))
+                    throw new AlreadyExistException($"Vehicle with registration number {vehicle.RegistrationNumber} already exists.");
 
-                await _vehicleRepository.Create(vehicle);
+                await _vehicleRepository.CreateAsync(vehicle);
             }
             
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<ActionResult> Edit(int id)
         {
-            var vehicle = await _vehicleRepository.Get(id);
-
-            if (vehicle == null)
-                throw new NotFoundException($"There is no vehicle with such id - {id}");
+            var vehicle = await _vehicleRepository.GetAsync(id)
+                ?? throw new NotFoundException($"Vehicle with ID {id} not found.");
 
             return View(vehicle);
         }
@@ -91,10 +88,10 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async  Task<ActionResult> Edit(Vehicle vehicle)
         {
-            if (!(await IsExist(vehicle.RegistrationNumber, vehicle.Model)))
-                throw new AlreadyExistException($"There is already exist vehicle with this registration number - {vehicle.RegistrationNumber}");
-            
-            await _vehicleRepository.Update(vehicle);
+            if (!(await IsExist(vehicle.RegistrationNumber, vehicle.VehicleId)))
+                throw new AlreadyExistException($"Vehicle with registration number {vehicle.RegistrationNumber} already exists.");
+
+            await _vehicleRepository.UpdateAsync(vehicle);
 
             return RedirectToAction("Index");
         }
@@ -102,10 +99,8 @@ namespace WebAutopark.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
-            var vehicle = await _vehicleRepository.Get(id);
-
-            if (vehicle == null)
-                throw new NotFoundException($"There is no vehicle with such id - {id}");
+            var vehicle = await _vehicleRepository.GetAsync(id)
+                ?? throw new NotFoundException($"Vehicle with ID {id} not found.");
 
             return View(vehicle);
         }
@@ -113,35 +108,26 @@ namespace WebAutopark.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(Vehicle vehicle)
         {
-            await _vehicleRepository.Delete(vehicle);
+            await _vehicleRepository.DeleteAsync(vehicle);
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> IsExist(string RegistrationNumber, string model) //this mb need to optimized //to DB regNumber write unique field
+        private async Task<bool> IsExist(string registrationNumber, int vehicleId)
         {
-            if (string.IsNullOrEmpty(RegistrationNumber))
-                return true;
+            if (string.IsNullOrWhiteSpace(registrationNumber))
+                return false;
 
-            var vehicle = await _vehicleRepository.GetByRegNumber(RegistrationNumber);
+            var existingVehicle = await _vehicleRepository.GetByRegistrationNumberAsync(registrationNumber);
+            bool isAvailable = existingVehicle == null || existingVehicle.VehicleId == vehicleId;
 
-            if (vehicle == null)
-                return true;
-
-            Console.WriteLine(model);
-
-            if (vehicle.Model.Equals(model))
-            {
-                return true;
-            }
-            
-            return false;
+            return isAvailable;
         }
 
         [HttpGet]
-        public async Task<IActionResult> CheckForRegNumber(string RegistrationNumber, string Model)
+        public async Task<IActionResult> IsRegistrationNumberAvaliable(string RegistrationNumber, int VehicleId)
         {
-            return Json(await IsExist(RegistrationNumber, Model));
+            return Json(await IsExist(RegistrationNumber, VehicleId));
         }
     }
 }

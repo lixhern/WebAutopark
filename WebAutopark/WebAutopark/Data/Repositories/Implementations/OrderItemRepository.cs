@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Models;
 
 namespace WebAutopark.Data.Repositories.Implementations
@@ -13,7 +13,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<OrderItem>> GetAll()
+        public async Task<IEnumerable<OrderItem>> GetAllAsync()
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -23,7 +23,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<OrderItem> Get(int id)
+        public async Task<OrderItem> GetAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -34,7 +34,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<int> Create(OrderItem item)
+        public async Task<int> CreateAsync(OrderItem item)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -49,7 +49,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -59,7 +59,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(OrderItem item)
+        public async Task DeleteAsync(OrderItem item)
         {
             using (var connection = _dbContext.GetConnection())
             {

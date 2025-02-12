@@ -1,7 +1,7 @@
 using WebAutopark.Controllers;
 using WebAutopark.Data;
 using WebAutopark.Data.Repositories.Implementations;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Middleware;
 using WebAutopark.Models;
 

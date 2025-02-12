@@ -1,6 +1,6 @@
 ﻿using WebAutopark.Models;
 
-namespace WebAutopark.Data.Repositories.Interfaces
+namespace WebAutopark.Data.Repositories.IRepositories
 {
     public interface IVehicleTypeRepository : IRepository<VehicleType>, IUpdatable<VehicleType>
     {

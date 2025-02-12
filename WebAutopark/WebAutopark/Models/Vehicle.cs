@@ -13,13 +13,13 @@ namespace WebAutopark.Models
         [StringLength(50, MinimumLength = 2)]
         public string Model { get; set; }
         [Required]
-        [Remote(action: "CheckForRegNumber", controller:"Vehicle", AdditionalFields = nameof(Model), ErrorMessage ="There is already exist vehicle with this reg number")]
+        [Remote(action: "IsRegistrationNumberAvaliable", controller:"Vehicle", AdditionalFields = nameof(VehicleId), ErrorMessage ="There is already exist vehicle with this reg number")]
         public string RegistrationNumber { get; set; }
         [Required]
         [Range(500, 30000, ErrorMessage ="The weight must be between 500 and 30000")]
         public int Weight {  get; set; }
         [Required]
-        [Range(1885, 2025, ErrorMessage = "The year must be berween 1885 and 2025")]
+        [Range(1885, 2025, ErrorMessage = "The year must be between 1885 and 2025")]
         public int Year {  get; set; }
         [Required]
         public int Mileage {  get; set; }

@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Models;
 
 namespace WebAutopark.Data.Repositories.Implementations
@@ -13,7 +13,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Vehicle>> GetAll()
+        public async Task<IEnumerable<Vehicle>> GetAllAsync()
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -23,7 +23,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<Vehicle> Get(int id)
+        public async Task<Vehicle> GetAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -36,7 +36,7 @@ namespace WebAutopark.Data.Repositories.Implementations
         }
 
 
-        public async Task<Vehicle> GetByRegNumber(string regNumber)
+        public async Task<Vehicle> GetByRegistrationNumberAsync(string regNumber)
         {
             using(var connection = _dbContext.GetConnection())
             {
@@ -50,7 +50,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<int> Create(Vehicle item)
+        public async Task<int> CreateAsync(Vehicle item)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -65,7 +65,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Update(Vehicle item)
+        public async Task UpdateAsync(Vehicle item)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -85,7 +85,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -95,7 +95,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(Vehicle item)
+        public async Task DeleteAsync(Vehicle item)
         {
             using (var connection = _dbContext.GetConnection()) 
             {

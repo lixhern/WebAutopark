@@ -1,10 +1,10 @@
 ﻿using WebAutopark.Models;
 
-namespace WebAutopark.Data.Repositories.Interfaces
+namespace WebAutopark.Data.Repositories.IRepositories
 {
     public interface IVehicleRepository : IRepository<Vehicle>, IUpdatable<Vehicle>
     {
-        Task<Vehicle> GetByRegNumber(string regNumber);
-        
+        Task<Vehicle> GetByRegistrationNumberAsync(string regNumber);
+
     }
 }

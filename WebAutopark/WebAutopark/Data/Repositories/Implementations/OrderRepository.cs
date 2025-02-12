@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Models;
 using WebAutopark.ViewModel;
 
@@ -14,7 +14,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Order>> GetAll()
+        public async Task<IEnumerable<Order>> GetAllAsync()
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -23,21 +23,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<IEnumerable<OrderViewModel>> GetAllInDetails()
-        {
-            using (var connection = _dbContext.GetConnection())
-            {
-                string query = @"
-                    SELECT oi.OrderId, v.Model, o.Date, c.Name, oi.Quantity FROM OrderItems oi
-                    JOIN Orders o ON oi.OrderId = o.OrderId
-                    Join Vehicles v ON o.VehicleId = v.VehicleId
-                    JOIN Components c ON oi.ComponentId = c.ComponentId";
-                var orders = await connection.QueryAsync<OrderViewModel>(query);
-                return orders;
-            }
-        }
-
-        public async Task<IEnumerable<OrderViewModel>> GetInDetails(int id)
+        public async Task<IEnumerable<OrderViewModel>> GetInDetailsAsync(int id)
         {
             using(var connection = _dbContext.GetConnection())
             {
@@ -54,7 +40,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<Order> Get(int id)
+        public async Task<Order> GetAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -65,7 +51,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<int> Create(Order item)
+        public async Task<int> CreateAsync(Order item)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -90,7 +76,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -101,7 +87,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(Order item)
+        public async Task DeleteAsync(Order item)
         {
             using (var connection = _dbContext.GetConnection())
             {

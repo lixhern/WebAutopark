@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Models;
 
 namespace WebAutopark.Data.Repositories.Implementations
@@ -13,7 +13,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<VehicleType>> GetAll()
+        public async Task<IEnumerable<VehicleType>> GetAllAsync()
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -23,7 +23,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<VehicleType> Get(int id)
+        public async Task<VehicleType> GetAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -34,7 +34,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task<int> Create(VehicleType item) 
+        public async Task<int> CreateAsync(VehicleType item) 
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -49,7 +49,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Update(VehicleType item)
+        public async Task UpdateAsync(VehicleType item)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -63,7 +63,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using (var connection = _dbContext.GetConnection())
             {
@@ -74,7 +74,7 @@ namespace WebAutopark.Data.Repositories.Implementations
             }
         }
 
-        public async Task Delete(VehicleType item)
+        public async Task DeleteAsync(VehicleType item)
         {
             using (var connection = _dbContext.GetConnection())
             {

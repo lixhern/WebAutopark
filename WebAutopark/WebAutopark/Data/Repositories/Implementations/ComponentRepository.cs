@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using WebAutopark.Data.Repositories.Interfaces;
+using WebAutopark.Data.Repositories.IRepositories;
 using WebAutopark.Models;
 
 namespace WebAutopark.Data.Repositories.Implementations
@@ -13,21 +13,21 @@ namespace WebAutopark.Data.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<WebAutopark.Models.Component>> GetAll()
+        public async Task<IEnumerable<WebAutopark.Models.Component>> GetAllAsync()
         {
             using var connection = _dbContext.GetConnection();
             string query = "SELECT * FROM Components";
             return await connection.QueryAsync<Component>(query);
         }
 
-        public async Task<WebAutopark.Models.Component> Get(int id)
+        public async Task<WebAutopark.Models.Component> GetAsync(int id)
         {
             using var connection = _dbContext.GetConnection();
             string query = "SELECT * FROM Components WHERE ComponentId = @Id";
             return await connection.QuerySingleOrDefaultAsync<Component>(query, new { Id = id });
         }
 
-        public async Task<int> Create(WebAutopark.Models.Component item)
+        public async Task<int> CreateAsync(WebAutopark.Models.Component item)
         {
             using var connection = _dbContext.GetConnection();
             string query = @"INSERT INTO Components (Name) 
@@ -36,16 +36,16 @@ namespace WebAutopark.Data.Repositories.Implementations
             return await connection.QuerySingleAsync<int>(query, item);
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             using var connection = _dbContext.GetConnection();
             string query = "DELETE FROM Components WHERE ComponentId = @Id";
             await connection.ExecuteAsync(query, new { Id = id });
         }
 
-        public async Task Delete(WebAutopark.Models.Component item)
+        public async Task DeleteAsync(WebAutopark.Models.Component item)
         {
-            await Delete(item.ComponentId);
+            await DeleteAsync(item.ComponentId);
         }
     }
 }
